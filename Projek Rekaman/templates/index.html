@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+  />
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+  />
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <button class="mobile-toggle d-lg-none" id="mobileToggle" aria-label="Toggle Mobile Menu">
+    <i class="fas fa-bars"></i>
+  </button>
+
+  <div class="mobile-menu-overlay" id="mobileOverlay"></div>
+  <div class="sidebar" id="sidebar">
+    <div class="logo-section">
+      <div class="logo-container">
+        <img src="{{url_for('static',filename='asset/tutuwuri.png')}}" alt="Logo" class="logo">
+      </div>
+      <button class="toggle-btn" aria-label="Toggle Sidebar" id="toggleBtn">
+        <i class="fas fa-chevron-left"></i>
+      </button>
+    </div>
+
+    <div class="menu">
+      <div class="menu-item active">
+        <i class="fas fa-home"><span>Dashboard</span></i>
+      </div>
+      <div class="menu-item">
+        <i class="fas fa-user"><span>Profile</span></i>
+      </div>
+      <div class="menu-item">
+        <i class="fas fa-sign-out-alt"><span>Logout</span></i>
+      </div>
+    </div>
+
+    <div class="main-container">
+      <div class="row g-0 w-100">
+        <div class="col-lg-9">
+          <div class="row g-3 w-100">
+            <div class="col-12">
+              <div class="card-info">
+                <div class="info-header">
+                  <h5>Informasi dan Notifikasi</h5>
+                  <button class="refresh-btn" id="refreshBtn"><i class="fas fa-sync-alt"></i></button>
+                </div>
+
+                <div class="notification-container" id="notificationContainer"></div>
+
+                <div class="api-status">
+                  <div><span class="pulse"></span>
+                  <span>API Status: <strong>Connected</strong></span></div>
+
+                  <div class="api-data" id="apiData">
+                    <span class="api-data-label">Data Points:</span>
+                    <span class="api-data-value">2,458</span>
+                    <span class="api-data-label">Last Update:</span>
+                    <span class="api-data-value" id="lastUpdate">-</span>
+                    <span class="api-data-label">Data Interval:</span>
+                    <span class="api-data-value">5 minutes</span>
+                  </div>
+                </div>
+
+                {% for district in ['A','B','C','D']%}
+
+                <div class="col-lg-6">
+                  <div class="card">
+                    <h5><center>Distrik {{district}}</center></h5>
+                    <div class="district-card">
+                      <div class="district-data">
+                        <div class="data-item">
+                          <span class="data-label"><i class="fas fa-thermometer-half"></i> Suhu</span>
+                          <span class="data-value">-- °C</span>
+                        </div>
+                        <div class="data-item">
+                          <span class="data-label"><i class="fas fa-tint"></i> Kelembapan</span>
+                          <span class="data-value">-- %</span>
+                        </div>
+                        <div class="data-item">
+                          <span class="data-label"><i class="fas fa-mountain"></i> Ketinggian</span>
+                          <span class="data-value">-- m</span>
+                        </div>
+                        <div class="data-item">
+                          <span class="data-label"><i class="fas fa-wind"></i> Tekanan</span>
+                          <span class="data-value">-- hPa</span>
+                        </div>
+                      </div>
+
+                      <div class="chart-container">
+                        <canvas id="district{{ district }}Chart"></canvas>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                {%endfor%}
+              </div>
+            </div>
+
+            <div class="col-lg-3">
+              <div class="control-panel">
+                <h5>Kontrol Panel</h5>
+                <div class="d-flex flex-wrap simple-kontrol-flex">
+                  {%for device in ['Lampu','Suara','AC','Kipas']%}
+
+                  <div class="simple-kontrol-item">
+                    <h3>{{ device }}</h3>
+                    <button class="btn-status off" onclick="toggleSimple(this)">OFF</button>
+                  </div>
+                  {% endfor %}
+                </div>
+
+                <div class="control-group mt-4">
+                  <div class="control-group-title">Status Perangkat</div>
+                  {% for d in ['A','B','C','D']%}
+                  <div class="control-group-title">Distrik {{ d }}</div>
+                  <div class="device-status">
+                    <div class="device">
+                      <span class="device-name">Sensor #{{ loop.index }}</span>
+                      <span class="status-badge connected">Connected</span>
+                    </div>
+                    <div class="device">
+                    <span class="device-name">Gateway #{{ loop.index }}</span>
+                      <span class="status-badge connected">Connected</span>
+                    </div>
+                  </div>
+                </div>
+                {%endfor%}
+              </div>
+
+              <div class="control-actions mt-t">
+                <button class="action-btn" id="refreshDevices">
+                  <i class="fas fa-sync-alt"></i>Refresh Device
+                </button>
+                <button class="action-btn" id="resetSensors">
+                  <i class="fas fa-redo"></i> Reset Sensors
+                </button>
+                <button class="action-btn" id="exportData">
+                  <i class="fas fa-download"></i> Export Data
+                </button>
+              </div>
+
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</body>
+</html>
